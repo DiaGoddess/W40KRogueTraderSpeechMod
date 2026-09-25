@@ -1,4 +1,5 @@
 ﻿using Owlcat.Runtime.UniRx;
+using SpeechMod.Voice;
 using System;
 using TMPro;
 using UniRx;
@@ -150,7 +151,7 @@ public static class Hooks
             {
                 if (clickEvent?.button == UnityEngine.EventSystems.PointerEventData.InputButton.Left)
                 {
-                    Main.Speech?.Speak(textMeshPro.text);
+                    Main.Speech?.Speak(textMeshPro.text.PrepareText());
                 }
             }
         );
