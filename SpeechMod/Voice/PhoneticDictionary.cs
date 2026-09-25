@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,8 +20,13 @@ public static class PhoneticDictionary
 
     public static string PrepareText(this string text)
     {
+        if (string.IsNullOrWhiteSpace(text))
+            return text;
+
         if (s_PhoneticDictionary == null || !s_PhoneticDictionary.Any())
             LoadDictionary();
+
+        text = Regex.Replace(text, "<.*?>", string.Empty);
 
         text = text.ToLower();
         text = text.Replace("\"", "");
@@ -32,7 +37,6 @@ public static class PhoneticDictionary
 
         text = SpaceOutDate(text);
 
-        // Regex enabled dictionary
         return s_PhoneticDictionary?.Aggregate(text, (current, entry) => Regex.Replace(current, entry.Key, entry.Value));
     }
 
@@ -41,14 +45,17 @@ public static class PhoneticDictionary
         Main.Logger?.Log("Loading phonetic dictionary...");
         try
         {
-            var file = Path.Combine(Constants.LOCAL_LOW_PATH!,
-                "Owlcat Games",
-                "Warhammer 40000 Rogue Trader",
-                "UnityModManager",
-                "W40KSpeechMod",
-                "PhoneticDictionary.json");
+            var basePath = Path.Combine(Constants.LOCAL_LOW_PATH!, "Owlcat Games", "Warhammer 40000 Rogue Trader", "UnityModManager");
+            
+            var file = Path.Combine(basePath, "W40KRTSpeechMod", "PhoneticDictionary.json");
+            if (!File.Exists(file))
+            {
+                file = Path.Combine(basePath, "W40KSpeechMod", "PhoneticDictionary.json");
+            }
+
             var json = File.ReadAllText(file, Encoding.UTF8);
             s_PhoneticDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            Main.Logger?.Log($"Phonetic dictionary loaded successfully from: {file}");
         }
         catch (Exception ex)
         {
@@ -58,9 +65,12 @@ public static class PhoneticDictionary
         }
 
 #if DEBUG
-        foreach (var entry in s_PhoneticDictionary)
+        if (s_PhoneticDictionary != null)
         {
-            Main.Logger?.Log($"{entry.Key}={entry.Value}");
+            foreach (var entry in s_PhoneticDictionary)
+            {
+                Main.Logger?.Log($"{entry.Key}={entry.Value}");
+            }
         }
 #endif
     }
