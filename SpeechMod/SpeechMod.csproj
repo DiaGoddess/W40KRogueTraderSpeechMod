@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenerateCustomPropsFile">
-    <Import Project="$(SolutionDir)GamePath.props" Condition="Exists('$(SolutionDir)GamePath.props')" />
+    <Import Project="$(MSBuildThisFileDirectory)..\GamePath.props" Condition="Exists('$(MSBuildThisFileDirectory)..\GamePath.props')" />
 
     <PropertyGroup>
         <TargetFramework>net481</TargetFramework>
@@ -44,7 +44,8 @@
         <ZipDirectory SourceDirectory="$(MSBuildProjectDirectory)\$(OutputPath)" DestinationFile="$(MSBuildProjectDirectory)\$(OutputPath)\..\$(AssemblyName)-$(Version).zip" Overwrite="true" />
     </Target>-->
     <ItemGroup>
-        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" IncludeAssets="build; contentfiles" Version="0.4.3" PrivateAssets="all" />
         <PackageReference Include="MicroUtils.HarmonyAnalyzers" IncludeAssets="runtime; build; native; contentfiles; analyzers" Version="*-*" PrivateAssets="all" />
         <!--<PackageReference Include="PublishToWorkshop" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" Version="1.0.10" PrivateAssets="all" />-->
@@ -67,7 +68,7 @@
             <RogueTraderInstallDir>$([System.Text.RegularExpressions.Regex]::Match($(MonoPathLine), $(MonoPathRegex)).Groups[1].Value)</RogueTraderInstallDir>
         </PropertyGroup>
 
-        <WriteLinesToFile File="$(SolutionDir)GamePath.props" Lines="&lt;Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'&gt;&#xD;&#xA;	&lt;PropertyGroup&gt;&#xD;&#xA;		&lt;RogueTraderInstallDir&gt;$(RogueTraderInstallDir)&lt;/RogueTraderInstallDir&gt;&#xD;&#xA;	&lt;/PropertyGroup&gt;&#xD;&#xA;&lt;/Project&gt;" Overwrite="true" Encoding="utf-8" />
+        <WriteLinesToFile File="$(MSBuildThisFileDirectory)..\GamePath.props" Lines="&lt;Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'&gt;&#xD;&#xA;	&lt;PropertyGroup&gt;&#xD;&#xA;		&lt;RogueTraderInstallDir&gt;$(RogueTraderInstallDir)&lt;/RogueTraderInstallDir&gt;&#xD;&#xA;	&lt;/PropertyGroup&gt;&#xD;&#xA;&lt;/Project&gt;" Overwrite="true" Encoding="utf-8" />
     </Target>
     <Target Name="DeleteCustomPropsFile" BeforeTargets="Clean">
         <Delete Files="GamePath.props" />
